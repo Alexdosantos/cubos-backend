@@ -11,6 +11,7 @@ Siga os passos abaixo para rodar o backend localmente.
 Antes de começar, certifique-se de que você tem as seguintes ferramentas instaladas:
 
 - [Node.js](https://nodejs.org/)
+- [NestJS](https://nestjs.com/)
 - [npm](https://www.npmjs.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - Conta no [Supabase](https://supabase.io/)
