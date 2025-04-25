@@ -1,9 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { createClient } from '@supabase/supabase-js';
 import { compressImage } from '../sharpe/sharpe';
 
-const supabaseUrl = 'https://ylbgmhtllnhdkqwpgnkp.supabase.co';
-const supabaseKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsYmdtaHRsbG5oZGtxd3BnbmtwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NTQ1MDc0NiwiZXhwIjoyMDYxMDI2NzQ2fQ.AKIBfxOJ8VmT3OnmnU5J0qzSFhApd1-bLsSVZI84_vE';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+
+console.log('URL:', supabaseUrl); // para debug
+console.log('KEY:', supabaseKey); // cuidado para não subir isso em produção
 
 export const uploadImageSupabase = async (
   fileBuffer: Express.Multer.File,
@@ -15,12 +20,10 @@ export const uploadImageSupabase = async (
       },
     });
 
-    // Comprime a imagem e converte para WebP
     const compressedBuffer = await compressImage(fileBuffer);
 
     const fileName = fileBuffer.originalname.replace(/\.[^/.]+$/, '') + '.webp';
 
-    // Faz o upload da imagem
     const { data, error } = await supabase.storage
       .from('cubos')
       .upload(fileName, compressedBuffer, {
@@ -31,12 +34,10 @@ export const uploadImageSupabase = async (
       throw new Error(error?.message || 'Upload failed');
     }
 
-    // Gera a URL pública do arquivo enviado
     const { data: publicUrlData } = supabase.storage
       .from('cubos')
-      .getPublicUrl(data.path); // Use data.path para pegar o caminho correto do arquivo
+      .getPublicUrl(data.path);
 
-    // Retorna a URL pública como string
     return publicUrlData.publicUrl;
   } catch (error) {
     throw new Error(error.message);
